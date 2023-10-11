@@ -8,6 +8,9 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import at.favre.lib.crypto.bcrypt.BCrypt;
+import lombok.var;
+
 @RestController
 @RequestMapping("/users")
 public class UserController {
@@ -19,10 +22,15 @@ public class UserController {
     public ResponseEntity create(@RequestBody UserModel userModel) {
         UserModel user = this.repository.findByUsername(userModel.getUsername());
         if(user != null) {
-            //return new ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Este usuário já existe");
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Este usuário já existe");
         }
-        //return new ResponseEntity<UserModel>(this.repository.save(userModel), HttpStatus.CREATED);
+
+        // encriptografa a senha e depois transforma ela em char pois o paramêtro do hashToString pede char
+        var passwdHashred = BCrypt.withDefaults().hashToString(12, userModel.getPassword().toCharArray());
+
+        // depois só setta essa nova senha
+        userModel.setPassword(passwdHashred);
+
         UserModel userCreated = this.repository.save(userModel);
         return ResponseEntity.status(HttpStatus.CREATED).body(userCreated);
 
