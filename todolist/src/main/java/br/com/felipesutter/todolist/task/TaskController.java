@@ -70,13 +70,26 @@ public class TaskController {
 
     // atualiza uma task baseado no id da task e do user que tem essa task
     @PutMapping("/{id}")
-    public TaskModel update(@RequestBody TaskModel taskModel, @PathVariable UUID id, HttpServletRequest request) {
-
+    public ResponseEntity update(@RequestBody TaskModel taskModel, @PathVariable UUID id, HttpServletRequest request) {
         var task = this.repository.findById(id).orElse(null);
 
-        Utils.copyNonNullProperties(taskModel, task);
+        // se a tarefa n existir
+        if (task == null) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                    .body("Tarefa não encontrada.");
+        }
 
-        return this.repository.save(task);
+        var idUser = request.getAttribute("idUser");
+        // se a task for de outro usuário sem permissão, manda um bad request
+        if (!task.getIdUser().equals(idUser)) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                    .body("Usuário não tem permissão para fazer isso.");
+        }
+
+        Utils.copyNonNullProperties(taskModel, task);
+        var taskUpdated = this.repository.save(task);
+        return ResponseEntity.ok().body(taskUpdated);
+
     }
 
 }
