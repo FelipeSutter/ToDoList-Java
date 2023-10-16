@@ -5,6 +5,16 @@
 
 <p>O projeto foi feito com Spring Boot na IDE Visual Studio Code com operações de CRUD e validações de segurança.</p>
 
+<ul>
+  <li>Pasta User</li>
+  <li>Pasta Task</li>
+  <li>Pasta Utils</li>
+  <li>Pasta Filter</li>
+  <li>Pasta Errors</li>
+</ul>
+
+<p>Nas pastas User e Task contém as operações de CRUD e contém arquivos como Model, Repository, Controller e Service.</p>
+
 <h2>Tecnologias Utilizadas</h2>
 
 <ul>
